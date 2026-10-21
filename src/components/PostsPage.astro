@@ -1,6 +1,8 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro'
 import PostEntry from '../components/PostEntry.astro'
+import { Icon } from 'astro-icon/components'
+import { siteConfig } from '../config'
 import type { ChannelInfo, SeoMeta } from '../types'
 
 const { SITE_URL } = Astro.locals
@@ -25,10 +27,22 @@ const {
 }
 const posts = channel.posts ?? []
 
-const beforeCursor = posts[posts.length - 1]?.id
-const afterCursor = posts[0]?.id
+const displayName = siteConfig?.moments?.name?.trim() || channel?.title
+const avatarOverride = siteConfig?.moments?.avatar?.trim()
+const feedAvatar = avatarOverride || channel?.avatar
+
+// 分页：Telegram 每个窗口约返回 20 条，按 pageSize 截取。
+// 向旧翻页（首页/ /before/）显示窗口最新的 pageSize 条；向新翻页（/after/）显示最旧的 pageSize 条，
+// 游标取可见范围的边界，保证跨页消息连续不重不漏。
+const pageSize = Math.max(1, Math.floor(Number(siteConfig?.pageSize)) || 10)
+const isPagedFeed = showOlder || showNewer
+const isAfterPage = Astro.url.pathname.includes('/after/')
+const visiblePosts = isPagedFeed ? (isAfterPage ? posts.slice(-pageSize) : posts.slice(0, pageSize)) : posts
+
+const beforeCursor = visiblePosts[visiblePosts.length - 1]?.id
+const afterCursor = visiblePosts[0]?.id
 const hasOlderPosts = showOlder && beforeCursor && Number(beforeCursor) > 1
-const hasNewerPosts = showNewer && afterCursor
+const hasNewerPosts = showNewer && afterCursor && (isAfterPage || Astro.url.pathname.includes('/before/'))
 ---
 
 <BaseLayout channel={channel} pageClass={pageClass} seo={pageSeo} pageType={pageType}>
@@ -36,9 +50,9 @@ const hasNewerPosts = showNewer && afterCursor
   <slot name="header" />
   <ol class="posts-feed" aria-label={isDetail ? 'Post' : 'Posts'}>
     {
-      posts.map((post) => (
+      visiblePosts.map((post) => (
         <li>
-          <PostEntry post={post} isDetail={isDetail} channelAvatar={channel.avatar} channelTitle={channel.title} />
+          <PostEntry post={post} isDetail={isDetail} channelAvatar={feedAvatar} channelTitle={displayName} />
         </li>
       ))
     }
@@ -47,14 +61,16 @@ const hasNewerPosts = showNewer && afterCursor
   {
     hasOlderPosts || hasNewerPosts ? (
       <nav class="pagination" aria-label="Pagination">
-        {hasOlderPosts ? (
-          <a href={`${SITE_URL}before/${beforeCursor}`} title="Older posts" aria-label="Older posts" class="older">
-            <span aria-hidden="true">←</span>
+        {hasNewerPosts ? (
+          <a href={`${SITE_URL}after/${afterCursor}`} title="Newer posts" class="newer">
+            <Icon name="ri:arrow-up-line" aria-hidden="true" />
+            <span>更新的动态</span>
           </a>
         ) : null}
-        {hasNewerPosts ? (
-          <a href={`${SITE_URL}after/${afterCursor}`} title="Newer posts" aria-label="Newer posts" class="newer">
-            <span aria-hidden="true">→</span>
+        {hasOlderPosts ? (
+          <a href={`${SITE_URL}before/${beforeCursor}`} title="Older posts" class="older">
+            <span>更早的动态</span>
+            <Icon name="ri:arrow-down-line" aria-hidden="true" />
           </a>
         ) : null}
       </nav>

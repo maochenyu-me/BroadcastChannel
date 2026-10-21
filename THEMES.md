@@ -21,6 +21,7 @@ Use one of these exact `.env` configurations:
 | TG Channel       | Fixed light, single-column messages | `HEADER_INJECT='<link rel="stylesheet" href="/themes/tg-channel.css">'`       |
 | ZAE              | Fixed light, compact document sheet | `HEADER_INJECT='<link rel="stylesheet" href="/themes/zae.css">'`              |
 | Polar            | Fixed light, minimal 760px column   | `HEADER_INJECT='<link rel="stylesheet" href="/themes/polar.css">'`            |
+| Moments          | Follows the system preference       | `HEADER_INJECT='<link rel="stylesheet" href="/themes/moments.css">'`          |
 
 Aria uses a neutral, system-sans presentation with light and dark palettes, a dashed square-line grid wash, and larger media radii. Sepia uses a fixed light palette and system-sans typography. All four Terminal variants use the same square, fixed-dark, Fira Code–first monospace design (loaded from Google Fonts when available); only their background, surface, accent, muted, border, and visited-link palettes differ.
 
@@ -28,7 +29,9 @@ HN News is a compact, utilitarian full-post feed with a warm light canvas, orang
 
 Polar is an original BroadcastChannel theme with a fixed-light, 760px single-column layout, a system sans-serif stack, a white canvas with alpha-black ink, and solid rules. It uses no shadows or patterns and does not switch with the system preference.
 
-All overrides are independently implemented for BroadcastChannel. Polar is an original project-owned design; HN News, TG Channel, and ZAE are visual interpretations, not source adaptations or official themes. No source code, CSS, fonts, or assets from Hacker News, Telegram, or Zed are bundled. See [NOTICE.md](./NOTICE.md) for provenance and non-affiliation details.
+Moments is a WeChat Moments–style theme: a gray page backdrop with one centered white column, a tall cover header with the channel avatar and title overlaid on the cover, per-entry avatars and channel names revealed from the Base feed hooks, a bar-style reactions block, and a WeChat-green accent. It follows the system light/dark preference. The optional cover image is configured in `src/config.ts` (`siteConfig.moments.coverImage`); when unset, the header falls back to a built-in gradient.
+
+All overrides are independently implemented for BroadcastChannel. Polar is an original project-owned design; Moments takes visual inspiration from the icefox Typecho theme; HN News, TG Channel, and ZAE are visual interpretations, not source adaptations or official themes. No source code, CSS, fonts, or assets from icefox, Hacker News, Telegram, or Zed are bundled. See [NOTICE.md](./NOTICE.md) for provenance and non-affiliation details.
 
 `/themes/terminal-base.css` is an internal shared stylesheet imported by the four Terminal entry files. Do not load it directly: it has no standalone palette. There is no `/themes/terminal.css` entry point.
 

@@ -179,7 +179,10 @@ describe('bear CSS contract', () => {
       expect(postEntry).toContain(`class="${className}"`)
     }
 
-    expect(compact(postsPage)).toContain('channelAvatar={channel.avatar} channelTitle={channel.title}')
+    expect(compact(postsPage)).toContain('const avatarOverride = siteConfig?.moments?.avatar?.trim()')
+    expect(compact(postsPage)).toContain('const feedAvatar = avatarOverride || channel?.avatar')
+    expect(compact(postsPage)).toContain('const displayName = siteConfig?.moments?.name?.trim() || channel?.title')
+    expect(compact(postsPage)).toContain('channelAvatar={feedAvatar} channelTitle={displayName}')
   })
 
   it('labels the locally observed Telegram comments iframe', () => {

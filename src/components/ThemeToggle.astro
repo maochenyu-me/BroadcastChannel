@@ -1,0 +1,25 @@
+---
+import { Icon } from 'astro-icon/components'
+---
+
+<button id="theme-toggle" type="button" aria-label="Toggle light / dark mode">
+  <Icon name="ri:sun-line" class="icon-sun" aria-hidden="true" />
+  <Icon name="ri:moon-line" class="icon-moon" aria-hidden="true" />
+</button>
+
+<script is:inline>
+  ;(() => {
+    const root = document.documentElement
+    const button = document.getElementById('theme-toggle')
+    if (!button) {
+      return
+    }
+    button.addEventListener('click', () => {
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
+      const current = root.dataset.theme || (prefersDark ? 'dark' : 'light')
+      const next = current === 'dark' ? 'light' : 'dark'
+      root.dataset.theme = next
+      localStorage.setItem('theme', next)
+    })
+  })()
+</script>

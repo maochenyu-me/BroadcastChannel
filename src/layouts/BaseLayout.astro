@@ -5,6 +5,7 @@ import BackToTop from '../components/BackToTop.astro'
 import SiteHeader from '../components/SiteHeader.astro'
 import SiteNavigation from '../components/SiteNavigation.astro'
 import SiteFooter from '../components/SiteFooter.astro'
+import ThemeToggle from '../components/ThemeToggle.astro'
 import { getEnv, parseDelimitedItems } from '../lib/env'
 import { getPageSeo } from '../lib/seo'
 import type { ChannelInfo, SeoMeta } from '../types'
@@ -37,6 +38,11 @@ const TAGS = getEnv(import.meta.env, 'TAGS')
 const LINKS = getEnv(import.meta.env, 'LINKS')
 const navs = parseDelimitedItems(getEnv(import.meta.env, 'NAVS'))
 
+const isMomentsTheme = HEADER_INJECT.includes('/themes/moments.css')
+
+/* Injected before first paint so a stored light/dark choice applies without flashing. */
+const themeInitScript = `<script>document.documentElement.dataset.theme = localStorage.getItem('theme')</script>`
+
 const skipLinkText = 'Skip to main content'
 ---
 
@@ -57,6 +63,7 @@ const skipLinkText = 'Skip to main content'
       {...seoParams}
     />
     <Fragment set:html={HEADER_INJECT} />
+    {isMomentsTheme && <Fragment set:html={themeInitScript} />}
   </head>
 
   <body class:list={[pageType, pageClass]}>
@@ -80,6 +87,7 @@ const skipLinkText = 'Skip to main content'
       <slot />
     </main>
     <SiteFooter />
+    {isMomentsTheme && <ThemeToggle />}
     <BackToTop />
     <Fragment set:html={FOOTER_INJECT} />
   </body>

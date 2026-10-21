@@ -82,4 +82,14 @@ The optional `public/themes/polar.css` theme is an original BroadcastChannel des
 - License: [GNU Affero General Public License v3.0](https://github.com/ccbikai/BroadcastChannel/blob/main/LICENSE)
 - Nature: Original project-owned design and implementation; no external visual upstream
 
-These are attribution and compatibility notices only. They do not imply endorsement by or official affiliation with Bear Blog, Planetable, hugo-theme-terminal, Aria Template, Y Combinator or Hacker News, Telegram Messenger Inc., or Zed Industries, Inc., and they do not change the licensing of BroadcastChannel under the root `LICENSE`.
+## Moments theme
+
+The optional `public/themes/moments.css` theme takes visual inspiration from the WeChat Moments–style layout of the [icefox](https://github.com/xiaopanglian/icefox) Typecho theme. It is an independent implementation for BroadcastChannel's DOM, not an adaptation of icefox source material. No icefox source code, CSS, fonts, or assets are copied or bundled.
+
+- Visual reference: https://github.com/xiaopanglian/icefox
+- Copyright holder: 小胖脸 (xiaopanglian)
+- License: [GNU General Public License v3.0](https://github.com/xiaopanglian/icefox/blob/main/LICENSE)
+- License URL: https://github.com/xiaopanglian/icefox/blob/main/LICENSE
+- Nature: Visual inspiration; independent implementation, not adapted source
+
+These are attribution and compatibility notices only. They do not imply endorsement by or official affiliation with Bear Blog, Planetable, hugo-theme-terminal, Aria Template, Y Combinator or Hacker News, Telegram Messenger Inc., Zed Industries, Inc., or 小胖脸 (xiaopanglian), and they do not change the licensing of BroadcastChannel under the root `LICENSE`.

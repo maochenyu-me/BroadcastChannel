@@ -32,17 +32,17 @@ const primaryNavItems = [
   {
     href: siteUrl,
     pathname: siteRootPathname,
-    title: 'Home',
+    title: '首页',
   },
   showTags && {
     href: `${siteUrl}tags`,
     pathname: tagsPathname,
-    title: 'Tags',
+    title: '标签',
   },
   showLinks && {
     href: `${siteUrl}links`,
     pathname: linksPathname,
-    title: 'Links',
+    title: '链接',
   },
 ].filter((item): item is { href: string; pathname: string; title: string } => Boolean(item))
 ---

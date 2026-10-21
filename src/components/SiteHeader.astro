@@ -1,6 +1,7 @@
 ---
 import { Icon } from 'astro-icon/components'
 import ChannelAvatar from './ChannelAvatar.astro'
+import { siteConfig } from '../config'
 import { getBooleanEnv, getEnv } from '../lib/env'
 import { sanitizeContentHtml } from '../lib/sanitize'
 import { buildSocialLinks } from '../lib/social'
@@ -18,7 +19,11 @@ const BLUESKY = getEnv(import.meta.env, 'BLUESKY')
 
 const hideDescription = getBooleanEnv(import.meta.env, 'HIDE_DESCRIPTION')
 const descriptionHtml = channel?.descriptionHTML ? sanitizeContentHtml(channel.descriptionHTML) : ''
-const homeLabel = channel?.title ? `Home — ${channel.title}` : 'Home'
+
+const displayName = siteConfig?.moments?.name?.trim() || channel?.title
+const avatarOverride = siteConfig?.moments?.avatar?.trim()
+const headerChannel = avatarOverride && channel ? { ...channel, avatar: avatarOverride } : channel
+const homeLabel = displayName ? `Home — ${displayName}` : 'Home'
 
 const socialLinks = buildSocialLinks({
   rssUrl: RSS_URL,
@@ -30,22 +35,26 @@ const socialLinks = buildSocialLinks({
   mastodon: MASTODON,
   bluesky: BLUESKY,
 })
+
+const coverImage = siteConfig?.moments?.coverImage?.trim() ?? ''
+const coverStyle = coverImage ? `--moments-cover-image: url("${coverImage.replace(/"/g, '%22')}")` : undefined
 ---
 
-<header class="site-header">
-  <a href={SITE_URL} class="avatar-link" title={channel?.title} aria-label={homeLabel}>
+<header class="site-header" style={coverStyle}>
+  <a href={SITE_URL} class="avatar-link" title={displayName} aria-label={homeLabel}>
     <ChannelAvatar
-      channel={channel}
+      channel={headerChannel}
       alt=""
       loading="eager"
       fetchpriority="high"
+      proxied={!avatarOverride}
       width="48"
       height="48"
       class="channel-avatar"
     />
   </a>
-  <a href={SITE_URL} class="title" title={channel?.title}>
-    <h1>{channel?.title}</h1>
+  <a href={SITE_URL} class="title" title={displayName}>
+    <h1>{displayName}</h1>
   </a>
   <div class="social-links" role="group" aria-label="Channel links">
     {
