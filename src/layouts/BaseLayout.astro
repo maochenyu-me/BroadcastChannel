@@ -7,6 +7,7 @@ import SiteNavigation from '../components/SiteNavigation.astro'
 import SiteFooter from '../components/SiteFooter.astro'
 import ThemeToggle from '../components/ThemeToggle.astro'
 import { getEnv, parseDelimitedItems } from '../lib/env'
+import { siteConfig } from '../config'
 import { getPageSeo } from '../lib/seo'
 import type { ChannelInfo, SeoMeta } from '../types'
 
@@ -38,7 +39,8 @@ const TAGS = getEnv(import.meta.env, 'TAGS')
 const LINKS = getEnv(import.meta.env, 'LINKS')
 const navs = parseDelimitedItems(getEnv(import.meta.env, 'NAVS'))
 
-const isMomentsTheme = HEADER_INJECT.includes('/themes/moments.css')
+const isMomentsTheme = siteConfig?.moments?.enabled === true || HEADER_INJECT.includes('/themes/moments.css')
+const momentsThemeHref = '/themes/moments.css'
 
 /* Injected before first paint so a stored light/dark choice applies without flashing. */
 const themeInitScript = `<script>document.documentElement.dataset.theme = localStorage.getItem('theme')</script>`
@@ -62,6 +64,7 @@ const skipLinkText = 'Skip to main content'
       }}
       {...seoParams}
     />
+    {isMomentsTheme && !HEADER_INJECT.includes(momentsThemeHref) && <link rel="stylesheet" href={momentsThemeHref} />}
     <Fragment set:html={HEADER_INJECT} />
     {isMomentsTheme && <Fragment set:html={themeInitScript} />}
   </head>

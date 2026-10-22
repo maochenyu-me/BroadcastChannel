@@ -5,6 +5,9 @@ export const siteConfig = {
 
   // Moments 主题（朋友圈风格）自定义项
   moments: {
+    // 启用 Moments 主题：注入 /themes/moments.css 并显示明暗切换按钮。
+    // 启用后无需再通过 HEADER_INJECT 注入主题样式（环境变量值不允许空格）
+    enabled: true,
     // 头部封面图 URL，留空则使用主题内置渐变
     coverImage: '',
     // 自定义头像 URL，留空则使用 Telegram 频道头像
