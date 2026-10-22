@@ -11,9 +11,11 @@ import { Icon } from 'astro-icon/components'
   ;(() => {
     const root = document.documentElement
     const button = document.getElementById('theme-toggle')
-    if (!button) {
+    if (!button || button.dataset.bound) {
       return
     }
+    // 防重入：swup 换页会重跑页面脚本，避免重复绑定导致点击互相抵消
+    button.dataset.bound = '1'
     button.addEventListener('click', () => {
       const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
       const current = root.dataset.theme || (prefersDark ? 'dark' : 'light')

@@ -1,0 +1,71 @@
+---
+import { Icon } from 'astro-icon/components'
+import { siteConfig } from '../config'
+
+const music = siteConfig?.moments?.music
+const musicSrc = music?.src?.trim() ?? ''
+const musicEnabled = siteConfig?.moments?.enabled === true && musicSrc.length > 0
+const audioSrc = /^\d+$/.test(musicSrc) ? `https://music.163.com/song/media/outer/url?id=${musicSrc}.mp3` : musicSrc
+const musicTitle = music?.title?.trim() ?? ''
+const musicAutoplay = music?.autoplay === true
+const musicLoop = music?.loop !== false
+
+const musicPlayerScript = musicEnabled
+  ? `<script>;(() => {
+  const wrap = document.querySelector('.music-player')
+  const audio = wrap && wrap.querySelector('audio')
+  const toggle = wrap && wrap.querySelector('.music-toggle')
+  if (!wrap || !audio || !toggle) {
+    return
+  }
+  // 防重入：swup 换页会重跑页面脚本，避免对同一元素重复绑定监听器
+  if (wrap.dataset.bound) {
+    return
+  }
+  wrap.dataset.bound = '1'
+  const setState = (playing) => {
+    wrap.dataset.state = playing ? 'playing' : 'paused'
+    toggle.setAttribute('aria-pressed', playing ? 'true' : 'false')
+    toggle.setAttribute('aria-label', playing ? 'Pause music' : 'Play music')
+  }
+  audio.addEventListener('play', () => setState(true))
+  audio.addEventListener('pause', () => setState(false))
+  toggle.addEventListener('click', () => {
+    if (audio.paused) {
+      audio.play().catch(() => setState(false))
+    } else {
+      audio.pause()
+    }
+  })
+  if (wrap.dataset.autoplay === 'true') {
+    audio.play().catch(() => setState(false))
+  }
+})()</script>`
+  : ''
+---
+
+{
+  musicEnabled && (
+    <div class="music-player" data-state="paused" data-autoplay={musicAutoplay ? 'true' : 'false'}>
+      <button
+        type="button"
+        class="music-toggle"
+        aria-pressed="false"
+        aria-label="Play music"
+        title={musicTitle || 'Music'}
+      >
+        <Icon name="ri:play-fill" class="music-icon-play" aria-hidden="true" />
+        <Icon name="ri:pause-fill" class="music-icon-pause" aria-hidden="true" />
+      </button>
+      <div class="music-eq" aria-hidden="true">
+        <i />
+        <i />
+        <i />
+        <i />
+        <i />
+      </div>
+      <audio src={audioSrc} preload="none" loop={musicLoop || undefined} />
+    </div>
+  )
+}
+<Fragment set:html={musicPlayerScript} />

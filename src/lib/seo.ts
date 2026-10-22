@@ -46,9 +46,7 @@ export function getPageSeo(options: {
   const shareImage = channel?.avatar
     ? `https://wsrv.nl/?w=1200&h=630&fit=cover&url=ssl:${channel.avatar.replace(URL_PROTOCOL_REGEX, '')}`
     : new URL('favicon.ico', absoluteSiteUrl).toString()
-  const favicon = channel?.avatar
-    ? `https://wsrv.nl/?w=64&h=64&fit=cover&mask=circle&url=ssl:${channel.avatar.replace(URL_PROTOCOL_REGEX, '')}`
-    : new URL('favicon.svg', absoluteSiteUrl).toString()
+  const favicon = new URL('favicon-32.png', absoluteSiteUrl).toString()
   const isArticle = ARTICLE_PATH_REGEX.test(pathname)
 
   return {
@@ -83,7 +81,7 @@ export function getPageSeo(options: {
           },
           {
             rel: 'apple-touch-icon',
-            href: new URL('favicon.ico', absoluteSiteUrl).toString(),
+            href: new URL('favicon-180.png', absoluteSiteUrl).toString(),
           },
           {
             rel: 'manifest',

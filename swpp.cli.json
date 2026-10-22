@@ -1,0 +1,4 @@
+{
+  "webRoot": "dist/client",
+  "configFiles": ["swpp.config.ts"]
+}

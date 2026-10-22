@@ -7,7 +7,7 @@
   "scripts": {
     "dev": "astro dev",
     "start": "astro dev",
-    "build": "astro build && node scripts/patch-edgeone-handler.mjs",
+    "build": "astro build && node scripts/patch-edgeone-handler.mjs && swpp-cli -b --prod",
     "preview": "astro preview",
     "astro": "astro",
     "lint": "eslint .",
@@ -16,6 +16,12 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "postinstall": "test -d .git && simple-git-hooks || true"
+  },
+  "dependencies": {
+    "@swup/head-plugin": "^2.3.1",
+    "@swup/scripts-plugin": "^2.1.0",
+    "@swup/scroll-plugin": "^4.0.0",
+    "swup": "^4.10.0"
   },
   "devDependencies": {
     "@antfu/eslint-config": "^9.1.0",
@@ -47,6 +53,7 @@
     "sanitize-html": "2.17.5",
     "simple-git-hooks": "^2.13.1",
     "std-env": "^4.2.0",
+    "swpp-backends": "^3.1.4",
     "tailwindcss": "^4.3.2",
     "typescript": "^5.9.3",
     "vitest": "^4.1.10",

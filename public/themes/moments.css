@@ -32,6 +32,7 @@
   --moments-bar-bg: #f7f7f7;
   --moments-time-color: #b2b2b2;
   --moments-cover-height: clamp(240px, 42vw, 320px);
+  --moments-cover-gradient: linear-gradient(168deg, #55677a 0%, #2b3947 55%, #131b23 100%);
   --reaction-paid-color: #6b5000;
   --reaction-paid-border-color: rgba(107, 80, 0, 0.34);
   --reaction-paid-background-color: #f3ead0;
@@ -123,6 +124,7 @@ html[data-theme='dark'] {
 }
 
 body {
+  position: relative;
   min-width: 0;
   max-width: calc(var(--width) + var(--body-padding-inline) + var(--body-padding-inline));
   margin: 0 auto;
@@ -170,10 +172,312 @@ summary:focus-visible,
   inset: 0 0 auto;
   height: var(--moments-cover-height);
   background-color: #39454f;
-  background-image: var(--moments-cover-image, linear-gradient(168deg, #55677a 0%, #2b3947 55%, #131b23 100%));
+  background-image: var(--moments-cover-image, var(--moments-cover-gradient));
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
+}
+
+/* Cover carousel: stacked layers, pure CSS cross-fade, no JavaScript.
+   Each slide fades in over the previous one (25% of one slot), holds, then fades out.
+   Slide k uses animation-delay (k - count) * interval, so windows tile the cycle. */
+.cover-carousel {
+  position: absolute;
+  inset: 0 0 auto;
+  height: var(--moments-cover-height);
+  overflow: hidden;
+}
+
+.cover-slide {
+  position: absolute;
+  inset: 0;
+  background-color: #39454f;
+  background-image: var(--cover-slide-img);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  opacity: 0;
+}
+
+.cover-slide:first-child {
+  opacity: 1;
+}
+
+.cover-carousel[data-count='2'] .cover-slide {
+  animation: cover-fade-2 var(--cover-cycle, 12s) linear infinite;
+}
+
+.cover-carousel[data-count='3'] .cover-slide {
+  animation: cover-fade-3 var(--cover-cycle, 18s) linear infinite;
+}
+
+.cover-carousel[data-count='4'] .cover-slide {
+  animation: cover-fade-4 var(--cover-cycle, 24s) linear infinite;
+}
+
+.cover-carousel[data-count='5'] .cover-slide {
+  animation: cover-fade-5 var(--cover-cycle, 30s) linear infinite;
+}
+
+.cover-carousel[data-count='6'] .cover-slide {
+  animation: cover-fade-6 var(--cover-cycle, 36s) linear infinite;
+}
+
+@keyframes cover-fade-2 {
+  0% {
+    opacity: 0;
+  }
+  12.5%,
+  50% {
+    opacity: 1;
+  }
+  62.5%,
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes cover-fade-3 {
+  0% {
+    opacity: 0;
+  }
+  8.33%,
+  33.33% {
+    opacity: 1;
+  }
+  41.67%,
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes cover-fade-4 {
+  0% {
+    opacity: 0;
+  }
+  6.25%,
+  25% {
+    opacity: 1;
+  }
+  31.25%,
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes cover-fade-5 {
+  0% {
+    opacity: 0;
+  }
+  5%,
+  20% {
+    opacity: 1;
+  }
+  25%,
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes cover-fade-6 {
+  0% {
+    opacity: 0;
+  }
+  4.17%,
+  16.67% {
+    opacity: 1;
+  }
+  20.83%,
+  100% {
+    opacity: 0;
+  }
+}
+
+/* Top-left floating music player: play/pause button + CSS equalizer bars. */
+.music-player {
+  position: absolute;
+  top: 12px;
+  left: 14px;
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 40px;
+}
+
+.music-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #fff;
+  cursor: pointer;
+}
+
+.music-toggle > svg,
+.music-toggle svg {
+  width: 20px;
+  height: 20px;
+}
+
+.music-player .music-icon-pause {
+  display: none;
+}
+
+.music-player[data-state='playing'] .music-icon-pause {
+  display: block;
+}
+
+.music-player[data-state='playing'] .music-icon-play {
+  display: none;
+}
+
+.music-eq {
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 14px;
+}
+
+.music-eq i {
+  width: 2px;
+  height: 100%;
+  border-radius: 1px;
+  background: #fff;
+  opacity: 0.5;
+  transform: scaleY(0.2);
+  transform-origin: bottom;
+}
+
+.music-player[data-state='playing'] .music-eq i {
+  opacity: 1;
+  animation: music-eq 1s ease-in-out infinite;
+}
+
+.music-player[data-state='playing'] .music-eq i:nth-child(1) {
+  animation-delay: -0.9s;
+}
+
+.music-player[data-state='playing'] .music-eq i:nth-child(2) {
+  animation-delay: -0.6s;
+}
+
+.music-player[data-state='playing'] .music-eq i:nth-child(3) {
+  animation-delay: -0.3s;
+}
+
+.music-player[data-state='playing'] .music-eq i:nth-child(4) {
+  animation-delay: -0.75s;
+}
+
+.music-player[data-state='playing'] .music-eq i:nth-child(5) {
+  animation-delay: -0.45s;
+}
+
+@keyframes music-eq {
+  0%,
+  100% {
+    transform: scaleY(0.25);
+  }
+  35% {
+    transform: scaleY(1);
+  }
+  70% {
+    transform: scaleY(0.45);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .music-player .music-eq i {
+    animation: none;
+  }
+}
+
+/* Cover video: muted looping layer with a full-area play/pause toggle. */
+.cover-video {
+  position: absolute;
+  inset: 0 0 auto;
+  height: var(--moments-cover-height);
+  overflow: hidden;
+}
+
+.cover-video video {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: translateZ(0);
+}
+
+.cover-video-toggle {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.cover-video-icon {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 56px;
+  height: 56px;
+  transform: translate(-50%, -50%);
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity 0.2s ease,
+    visibility 0.2s ease;
+  filter: drop-shadow(0 1px 4px rgba(0, 0, 0, 0.4));
+}
+
+.cover-video[data-cover-state='paused'] .cover-video-icon {
+  opacity: 1;
+  visibility: visible;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cover-slide {
+    animation: none;
+  }
+}
+
+[data-theme='dark'] .site-header::before {
+  background-image: var(--moments-cover-image-dark, var(--moments-cover-image, var(--moments-cover-gradient)));
+}
+
+[data-theme='dark'] .cover-slide {
+  background-image: var(--cover-slide-img-dark, var(--cover-slide-img));
+}
+
+[data-theme='dark'] .site-header > .title,
+[data-theme='dark'] .site-header > .title:visited,
+[data-theme='dark'] .site-header > .title:hover {
+  color: var(--moments-title-color-dark, var(--moments-title-color, var(--heading-color)));
+}
+
+@media (prefers-color-scheme: dark) {
+  html:not([data-theme='light']) .site-header::before {
+    background-image: var(--moments-cover-image-dark, var(--moments-cover-image, var(--moments-cover-gradient)));
+  }
+
+  html:not([data-theme='light']) .cover-slide {
+    background-image: var(--cover-slide-img-dark, var(--cover-slide-img));
+  }
+
+  html:not([data-theme='light']) .site-header > .title,
+  html:not([data-theme='light']) .site-header > .title:visited,
+  html:not([data-theme='light']) .site-header > .title:hover {
+    color: var(--moments-title-color-dark, var(--moments-title-color, var(--heading-color)));
+  }
 }
 
 .site-header > .avatar-link {
@@ -200,7 +504,7 @@ summary:focus-visible,
   right: 92px;
   max-width: 58%;
   overflow: hidden;
-  color: #fff;
+  color: var(--moments-title-color, var(--heading-color));
   text-align: right;
   text-shadow: 0 1px 3px rgba(0, 0, 0, 0.45);
   text-overflow: ellipsis;
@@ -208,11 +512,11 @@ summary:focus-visible,
 }
 
 .site-header > .title:visited {
-  color: #fff;
+  color: var(--moments-title-color, var(--heading-color));
 }
 
 .site-header > .title:hover {
-  color: #fff;
+  color: var(--moments-title-color, var(--heading-color));
   text-decoration: none;
 }
 
@@ -221,6 +525,7 @@ summary:focus-visible,
   font-size: 1.06rem;
   font-weight: 600;
   line-height: 1.4;
+  color: inherit;
 }
 
 .site-header > .social-links {

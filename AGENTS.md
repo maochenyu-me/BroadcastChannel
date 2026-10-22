@@ -52,7 +52,7 @@
 
 ## Code and content conventions
 
-- Server-rendered HTML is the default; keep browser JS near zero. Telegram comments are the deliberate exception.
+- Server-rendered HTML is the default; keep browser JS near zero. The deliberate exceptions are Telegram comments, the optional Moments cover video controls, the optional Moments music player, swup (`#swup` container in BaseLayout) which keeps those players alive across page navigations, and the swpp-generated service worker (`swpp.config.ts` + `swpp.cli.json`, run by `pnpm build` via `swpp-cli`) for PWA offline caching.
 - API-style routes must return `Response`/`Response.json`, not Express-like objects.
 - Follow ESLint formatting: 2 spaces, LF, UTF-8, single quotes, usually no semicolons; let `pnpm lint:fix` settle import order.
 - Preserve local naming: Astro components and layouts use `PascalCase.astro`; pages follow Astro route syntax.

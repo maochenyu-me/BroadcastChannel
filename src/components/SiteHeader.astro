@@ -36,11 +36,141 @@ const socialLinks = buildSocialLinks({
   bluesky: BLUESKY,
 })
 
-const coverImage = siteConfig?.moments?.coverImage?.trim() ?? ''
-const coverStyle = coverImage ? `--moments-cover-image: url("${coverImage.replace(/"/g, '%22')}")` : undefined
+const coverConfig = siteConfig?.moments?.cover
+const legacyCoverImage = siteConfig?.moments?.coverImage?.trim() ?? ''
+
+const escapeCoverUrl = (url) => url.replace(/"/g, '%22')
+
+const normalizeList = (value) =>
+  (Array.isArray(value) ? value : []).map((item) => (typeof item === 'string' ? item.trim() : ''))
+
+const configuredImages = normalizeList(coverConfig?.images).filter(Boolean)
+const configuredImagesDark = normalizeList(coverConfig?.imagesDark)
+const coverList = configuredImages.length > 0 ? configuredImages : legacyCoverImage ? [legacyCoverImage] : []
+const coverSlides = coverList.slice(0, 6).map((src, index) => ({ src, dark: configuredImagesDark[index] || '' }))
+const coverVideo = coverConfig?.video?.trim() ?? ''
+const coverPoster = coverConfig?.videoPoster?.trim() ?? ''
+const videoMuted = coverConfig?.videoMuted !== false
+const rawInterval = Number(coverConfig?.interval)
+const coverInterval = Number.isFinite(rawInterval) && rawInterval >= 2 ? rawInterval : 6
+
+const coverMode = coverVideo ? 'video' : coverSlides.length >= 2 ? 'carousel' : 'image'
+const singleCover = coverMode === 'image' ? coverSlides[0] : undefined
+const titleColor = (siteConfig?.moments?.titleColor?.trim() ?? '').replace(/"/g, '')
+const titleColorDark = (siteConfig?.moments?.titleColorDark?.trim() ?? '').replace(/"/g, '')
+
+const headerStyleVars = []
+if (singleCover) {
+  headerStyleVars.push(`--moments-cover-image: url("${escapeCoverUrl(singleCover.src)}")`)
+  if (singleCover.dark) {
+    headerStyleVars.push(`--moments-cover-image-dark: url("${escapeCoverUrl(singleCover.dark)}")`)
+  }
+}
+if (titleColor) {
+  headerStyleVars.push(`--moments-title-color: ${titleColor}`)
+}
+if (titleColorDark) {
+  headerStyleVars.push(`--moments-title-color-dark: ${titleColorDark}`)
+}
+const headerStyle = headerStyleVars.length > 0 ? headerStyleVars.join('; ') : undefined
+
+const coverVideoScript =
+  coverMode === 'video'
+    ? `<script>;(() => {
+  const wrap = document.querySelector('.cover-video')
+  const video = wrap && wrap.querySelector('video')
+  const toggle = wrap && wrap.querySelector('.cover-video-toggle')
+  if (!wrap || !video || !toggle) {
+    return
+  }
+  // 防重入：避免对同一元素重复绑定监听器
+  if (wrap.dataset.bound) {
+    return
+  }
+  wrap.dataset.bound = '1'
+  let userPaused = false
+  const setState = (playing) => {
+    wrap.dataset.coverState = playing ? 'playing' : 'paused'
+    toggle.setAttribute('aria-pressed', playing ? 'true' : 'false')
+    toggle.setAttribute('aria-label', playing ? 'Pause cover video' : 'Play cover video')
+  }
+  video.addEventListener('play', () => setState(true))
+  video.addEventListener('pause', () => setState(false))
+  toggle.addEventListener('click', () => {
+    if (video.paused) {
+      userPaused = false
+      video.play().catch(() => {})
+    } else {
+      userPaused = true
+      video.pause()
+    }
+  })
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    userPaused = true
+    video.pause()
+  }
+  if ('IntersectionObserver' in window) {
+    new IntersectionObserver((entries) => {
+      for (const entry of entries) {
+        if (entry.isIntersecting) {
+          if (!userPaused) {
+            video.play().catch(() => {})
+          }
+        } else {
+          video.pause()
+        }
+      }
+    }).observe(wrap)
+  }
+  if (video.paused) {
+    setState(false)
+  }
+})()</script>`
+    : ''
 ---
 
-<header class="site-header" style={coverStyle}>
+<header class="site-header" style={headerStyle}>
+  {
+    coverMode === 'video' && (
+      <div class="cover-video" data-cover-state="playing">
+        <video
+          src={coverVideo}
+          poster={coverPoster || undefined}
+          muted={videoMuted || undefined}
+          loop
+          playsinline
+          autoplay={videoMuted || undefined}
+          preload="metadata"
+        />
+        <button type="button" class="cover-video-toggle" aria-pressed="false" aria-label="Pause cover video">
+          <svg class="cover-video-icon" viewBox="0 0 56 56" aria-hidden="true">
+            <circle cx="28" cy="28" r="22" fill="rgba(0, 0, 0, 0.4)" />
+            <path d="M23 18.5v19l15.5-9.5z" fill="#fff" />
+          </svg>
+        </button>
+      </div>
+    )
+  }
+  <Fragment set:html={coverVideoScript} />
+  {
+    coverMode === 'carousel' && (
+      <div
+        class="cover-carousel"
+        data-count={coverSlides.length}
+        style={`--cover-cycle: ${coverSlides.length * coverInterval}s`}
+        aria-hidden="true"
+      >
+        {coverSlides.map((slide, index) => (
+          <div
+            class="cover-slide"
+            style={`--cover-slide-img: url("${escapeCoverUrl(slide.src)}")${
+              slide.dark ? `; --cover-slide-img-dark: url("${escapeCoverUrl(slide.dark)}")` : ''
+            }; animation-delay: ${(index - coverSlides.length) * coverInterval}s`}
+          />
+        ))}
+      </div>
+    )
+  }
   <a href={SITE_URL} class="avatar-link" title={displayName} aria-label={homeLabel}>
     <ChannelAvatar
       channel={headerChannel}

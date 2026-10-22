@@ -185,7 +185,7 @@ TARGET_WHITELIST=a.com,b.com
 HEADER_INJECT='<link rel="stylesheet" href="/themes/polar.css">'
 ```
 
-HN News、TG Channel、ZAE 和 Polar 是固定浅色主题；Aria 和 Moments 跟随系统深浅色。Moments 为微信朋友圈风格，可选的封面图在 `src/config.ts`（`siteConfig.moments.coverImage`）中配置。不要直接加载 `/themes/terminal-base.css`；项目不存在 `/themes/terminal.css`。
+HN News、TG Channel、ZAE 和 Polar 是固定浅色主题；Aria 和 Moments 跟随系统深浅色。Moments 为微信朋友圈风格，封面在 `src/config.ts` 的 `siteConfig.moments.cover` 中配置：支持单图（含明暗双图 `images` / `imagesDark`）、2-6 张纯 CSS 自动轮播、以及带点击播放/暂停的视频封面（`video` + `videoPoster`，优先于图片）；旧字段 `coverImage` 仍作为单图兜底生效。站点图标取自 `public/favicon-*.png`（由 favicon.png 派生），PWA 离线缓存由 swpp 生成（`swpp.config.ts`，构建时自动运行，`siteConfig.pwa.enabled` 控制是否注册 Service Worker）。不要直接加载 `/themes/terminal-base.css`；项目不存在 `/themes/terminal.css`。
 
 完整配置、明暗模式、平台控制台写法、自定义 CSS 与安全边界见 **[THEMES.md](./THEMES.md)**。主题归属见 **[NOTICE.md](./NOTICE.md)**。
 
