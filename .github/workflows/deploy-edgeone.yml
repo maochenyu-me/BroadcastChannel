@@ -1,0 +1,49 @@
+name: Deploy to EdgeOne Pages
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+concurrency:
+  group: edgeone-deploy
+  cancel-in-progress: true
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # GitHub Actions 上检测不到 EdgeOne 平台，必须显式指定适配器，
+      # 否则会回退到 node standalone，产物结构不对
+      - name: Build
+        run: pnpm build
+        env:
+          SERVER_ADAPTER: edgeone
+          CHANNEL: ${{ secrets.CHANNEL }}
+          TELEGRAM_HOST: telegram.dog
+          LOCALE: zh-CN
+          TIMEZONE: Asia/Shanghai
+
+      # 部署到 EdgeOne Makers（broadcastchannel-kudd7s78 为 Upload 直传类型项目，
+      # 支持 makers deploy 直传；项目内含 post-build 修补过的 SSR handler）
+      # -a overseas = 全球可用区（不含中国大陆），免 ICP 备案
+      - name: Deploy to EdgeOne Makers
+        run: npx -y edgeone@1.6.44 makers deploy ./.edgeone -a overseas -n broadcastchannel-kudd7s78 -t ${{ secrets.EDGEONE_API_TOKEN }} --json
+        env:
+          EDGEONE_API_TOKEN: ${{ secrets.EDGEONE_API_TOKEN }}
