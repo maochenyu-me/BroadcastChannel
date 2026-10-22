@@ -1,5 +1,6 @@
 /* Moments — WeChat Moments style visual interpretation for BroadcastChannel Base.
    Original implementation; inspired by the icefox (xiaopanglian) visual direction, no upstream code.
+   Ambient glow / glassmorphism treatment inspired by liushen.fun (https://www.liushen.fun/), no upstream code.
    Follows the system light/dark preference. Load via HEADER_INJECT only. */
 
 :root {
@@ -12,37 +13,43 @@
     -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Segoe UI', 'Microsoft YaHei', 'Helvetica Neue', Roboto,
     sans-serif;
   --font-scale: 1rem;
-  --background-color: #fff;
-  --heading-color: #1a1a1a;
-  --text-color: #1a1a1a;
-  --link-color: #576b95;
-  --visited-color: #576b95;
-  --feed-meta-visited-color: #576b95;
-  --code-background-color: #f7f7f7;
-  --code-color: #1a1a1a;
-  --blockquote-color: #576b95;
-  --accent-color: #07c160;
-  --border-color: rgba(0, 0, 0, 0.09);
-  --focus-color: #07c160;
-  --link-hover-color: #42577e;
-  --muted-color: #9a9a9a;
-  --surface-color: #fff;
-  --moments-page-bg: #ededed;
-  --moments-line: rgba(0, 0, 0, 0.07);
-  --moments-bar-bg: #f7f7f7;
-  --moments-time-color: #b2b2b2;
+  --background-color: #f1f5f9;
+  --heading-color: #0f172a;
+  --text-color: #334155;
+  --link-color: #0284c7;
+  --visited-color: #0284c7;
+  --feed-meta-visited-color: #0284c7;
+  --code-background-color: #f1f5f9;
+  --code-color: #1e293b;
+  --blockquote-color: #334155;
+  --accent-color: #0284c7;
+  --border-color: rgba(15, 23, 42, 0.1);
+  --focus-color: #0284c7;
+  --link-hover-color: #0369a1;
+  --muted-color: #64748b;
+  --surface-color: rgba(255, 255, 255, 0.72);
+  --moments-page-bg: #eef2f6;
+  --moments-line: rgba(15, 23, 42, 0.08);
+  --moments-bar-bg: rgba(255, 255, 255, 0.55);
+  --moments-time-color: #94a3b8;
+  --moments-glow-amber: rgba(251, 191, 36, 0.12);
+  --moments-glow-sky: rgba(56, 189, 248, 0.12);
+  --moments-card-bg: linear-gradient(180deg, rgba(255, 255, 255, 0.72), rgba(255, 255, 255, 0.56));
+  --moments-card-border: rgba(15, 23, 42, 0.07);
+  --moments-card-shadow: 0 16px 40px -34px rgba(15, 23, 42, 0.45);
+  --moments-card-shadow-hover: 0 22px 48px -32px rgba(15, 23, 42, 0.5);
   --moments-cover-height: clamp(240px, 42vw, 320px);
   --moments-cover-gradient: linear-gradient(168deg, #55677a 0%, #2b3947 55%, #131b23 100%);
   --reaction-paid-color: #6b5000;
   --reaction-paid-border-color: rgba(107, 80, 0, 0.34);
   --reaction-paid-background-color: #f3ead0;
-  --code-muted-color: #6f6f6f;
-  --code-accent-color: #43598c;
-  --code-alt-accent-color: #6f5a94;
-  --shadow-soft: none;
-  --radius-panel: 8px;
+  --code-muted-color: #64748b;
+  --code-accent-color: #0369a1;
+  --code-alt-accent-color: #7c3aed;
+  --shadow-soft: 0 16px 40px -34px rgba(15, 23, 42, 0.45);
+  --radius-panel: 12px;
   --radius-chip: 999px;
-  --radius-media: 6px;
+  --radius-media: 10px;
   --box-margin: 0px;
   --back-to-top-offset: max(1.25rem, env(safe-area-inset-right));
   --icon-hover-filter: none;
@@ -53,65 +60,81 @@
    Keep the two blocks in sync. */
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme='light']) {
-    --background-color: #191919;
-    --heading-color: #e8e8e8;
-    --text-color: #d4d4d4;
-    --link-color: #7d90a9;
-    --visited-color: #7d90a9;
-    --feed-meta-visited-color: #7d90a9;
-    --code-background-color: #242424;
-    --code-color: #d4d4d4;
-    --blockquote-color: #7d90a9;
-    --accent-color: #07c160;
+    --background-color: #0a0a0a;
+    --heading-color: #e2e8f0;
+    --text-color: #cbd5e1;
+    --link-color: #38bdf8;
+    --visited-color: #38bdf8;
+    --feed-meta-visited-color: #38bdf8;
+    --code-background-color: #1e293b;
+    --code-color: #e2e8f0;
+    --blockquote-color: #94a3b8;
+    --accent-color: #38bdf8;
     --border-color: rgba(255, 255, 255, 0.12);
-    --focus-color: #07c160;
-    --link-hover-color: #97a8c4;
-    --muted-color: #7a7a7a;
-    --surface-color: #191919;
-    --moments-page-bg: #111111;
+    --focus-color: #38bdf8;
+    --link-hover-color: #7dd3fc;
+    --muted-color: #64748b;
+    --surface-color: rgba(23, 23, 23, 0.72);
+    --moments-page-bg: #0a0a0a;
     --moments-line: rgba(255, 255, 255, 0.09);
-    --moments-bar-bg: #242424;
-    --moments-time-color: #6e6e6e;
+    --moments-bar-bg: rgba(23, 23, 23, 0.6);
+    --moments-time-color: #64748b;
+    --moments-glow-amber: rgba(245, 158, 11, 0.09);
+    --moments-glow-sky: rgba(34, 211, 238, 0.09);
+    --moments-card-bg: linear-gradient(180deg, rgba(23, 23, 23, 0.78), rgba(10, 10, 10, 0.62));
+    --moments-card-border: rgba(255, 255, 255, 0.08);
+    --moments-card-shadow: 0 16px 40px -34px rgba(0, 0, 0, 0.8);
+    --moments-card-shadow-hover: 0 22px 48px -32px rgba(0, 0, 0, 0.85);
     --reaction-paid-color: #f3cc65;
     --reaction-paid-border-color: rgba(243, 204, 101, 0.5);
     --reaction-paid-background-color: rgba(243, 204, 101, 0.14);
-    --code-muted-color: #8d8d8d;
-    --code-accent-color: #97a8c4;
-    --code-alt-accent-color: #ab97c9;
+    --code-muted-color: #94a3b8;
+    --code-accent-color: #7dd3fc;
+    --code-alt-accent-color: #c4b5fd;
   }
 }
 
 :root[data-theme='dark'] {
-  --background-color: #191919;
-  --heading-color: #e8e8e8;
-  --text-color: #d4d4d4;
-  --link-color: #7d90a9;
-  --visited-color: #7d90a9;
-  --feed-meta-visited-color: #7d90a9;
-  --code-background-color: #242424;
-  --code-color: #d4d4d4;
-  --blockquote-color: #7d90a9;
-  --accent-color: #07c160;
+  --background-color: #0a0a0a;
+  --heading-color: #e2e8f0;
+  --text-color: #cbd5e1;
+  --link-color: #38bdf8;
+  --visited-color: #38bdf8;
+  --feed-meta-visited-color: #38bdf8;
+  --code-background-color: #1e293b;
+  --code-color: #e2e8f0;
+  --blockquote-color: #94a3b8;
+  --accent-color: #38bdf8;
   --border-color: rgba(255, 255, 255, 0.12);
-  --focus-color: #07c160;
-  --link-hover-color: #97a8c4;
-  --muted-color: #7a7a7a;
-  --surface-color: #191919;
-  --moments-page-bg: #111111;
+  --focus-color: #38bdf8;
+  --link-hover-color: #7dd3fc;
+  --muted-color: #64748b;
+  --surface-color: rgba(23, 23, 23, 0.72);
+  --moments-page-bg: #0a0a0a;
   --moments-line: rgba(255, 255, 255, 0.09);
-  --moments-bar-bg: #242424;
-  --moments-time-color: #6e6e6e;
+  --moments-bar-bg: rgba(23, 23, 23, 0.6);
+  --moments-time-color: #64748b;
+  --moments-glow-amber: rgba(245, 158, 11, 0.09);
+  --moments-glow-sky: rgba(34, 211, 238, 0.09);
+  --moments-card-bg: linear-gradient(180deg, rgba(23, 23, 23, 0.78), rgba(10, 10, 10, 0.62));
+  --moments-card-border: rgba(255, 255, 255, 0.08);
+  --moments-card-shadow: 0 16px 40px -34px rgba(0, 0, 0, 0.8);
+  --moments-card-shadow-hover: 0 22px 48px -32px rgba(0, 0, 0, 0.85);
   --reaction-paid-color: #f3cc65;
   --reaction-paid-border-color: rgba(243, 204, 101, 0.5);
   --reaction-paid-background-color: rgba(243, 204, 101, 0.14);
-  --code-muted-color: #8d8d8d;
-  --code-accent-color: #97a8c4;
-  --code-alt-accent-color: #ab97c9;
+  --code-muted-color: #94a3b8;
+  --code-accent-color: #7dd3fc;
+  --code-alt-accent-color: #c4b5fd;
 }
 
 html {
   max-width: 100%;
-  background: var(--moments-page-bg);
+  background-color: var(--moments-page-bg);
+  background-image:
+    radial-gradient(circle at 0 0, var(--moments-glow-amber), transparent 26%),
+    radial-gradient(circle at 100% 0, var(--moments-glow-sky), transparent 24%);
+  background-attachment: fixed;
   overflow-x: clip;
 }
 
@@ -129,7 +152,7 @@ body {
   max-width: calc(var(--width) + var(--body-padding-inline) + var(--body-padding-inline));
   margin: 0 auto;
   padding: 0;
-  background: var(--background-color);
+  background: transparent;
   color: var(--text-color);
   font-family: var(--font-secondary);
   font-size: var(--font-scale);
@@ -163,7 +186,7 @@ html.is-rendering #swup {
 }
 
 ::selection {
-  background: rgba(7, 193, 96, 0.22);
+  background: rgba(14, 165, 233, 0.25);
 }
 
 button,
@@ -518,7 +541,7 @@ summary:focus-visible,
   width: 64px;
   height: 64px;
   border-radius: 8px;
-  background: #d7dade;
+  background: #e2e8f0;
   box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.25);
 }
 
@@ -640,6 +663,16 @@ summary:focus-visible,
 
 /* ---------- Feed ---------- */
 
+/* 面板统一毛玻璃质感：bar-bg 已是半透明色，这里补 blur */
+.desktop-search,
+.mobile-search form,
+.post-reactions,
+.pagination a,
+.content blockquote {
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+}
+
 #main-content {
   min-width: 0;
   padding: 4px 16px 28px;
@@ -655,16 +688,23 @@ summary:focus-visible,
   display: grid;
   grid-template-columns: 44px minmax(0, 1fr);
   column-gap: 12px;
-  margin: 0;
-  padding: 16px 0;
-  border-bottom: 1px solid var(--moments-line);
-  background: transparent;
+  margin: 0 0 14px;
+  padding: 16px;
+  border: 1px solid var(--moments-card-border);
+  border-radius: 14px;
+  background: var(--moments-card-bg);
+  box-shadow: var(--moments-card-shadow);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+  transition: box-shadow 0.2s ease;
+}
+
+.post-entry:hover {
+  box-shadow: var(--moments-card-shadow-hover);
 }
 
 .posts-feed > li:last-child .post-entry {
   margin-bottom: 0;
-  padding-bottom: 16px;
-  border-bottom: 0;
 }
 
 .post-entry-avatar {
@@ -674,7 +714,7 @@ summary:focus-visible,
   width: 42px;
   height: 42px;
   border-radius: 8px;
-  background: #d7dade;
+  background: #e2e8f0;
   object-fit: cover;
 }
 
@@ -930,6 +970,8 @@ summary:focus-visible,
   border-radius: 50%;
   background: var(--surface-color);
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
 }
 
 /* back-to-top 图标是 currentColor 的 <img>，深色下解析为黑色不可见，反色提亮 */
@@ -960,6 +1002,8 @@ summary:focus-visible,
   background: var(--surface-color);
   color: var(--text-color);
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
   cursor: pointer;
   transition: transform 180ms ease;
 }
@@ -1119,7 +1163,8 @@ summary:focus-visible,
   .post-entry {
     grid-template-columns: 38px minmax(0, 1fr);
     column-gap: 10px;
-    padding: 14px 0;
+    margin-bottom: 12px;
+    padding: 14px 12px;
   }
 
   .post-entry-avatar {
@@ -1256,7 +1301,13 @@ summary:focus-visible,
     display: block;
     margin-bottom: 1.25rem;
     padding-bottom: 1.25rem;
+    border: 0;
     border-bottom: 1px solid #aaa;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
   }
 
   .post-entry-author,
