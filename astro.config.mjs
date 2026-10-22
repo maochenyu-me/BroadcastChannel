@@ -37,6 +37,11 @@ const isEdgeOne = provider === 'edgeone_pages'
 
 const requestedProvider = process.env.SERVER_ADAPTER || (isEdgeOne ? 'edgeone' : provider)
 
+// Build-time diagnostics: visible in the EdgeOne Git-integration build log.
+console.info(
+  `[broadcastchannel] provider=${provider} | isEdgeOne=${isEdgeOne} | SERVER_ADAPTER=${process.env.SERVER_ADAPTER || '(unset)'} | adapter=${requestedProvider}`,
+)
+
 if (unsupportedProviders.has(requestedProvider)) {
   throw new Error('Cloudflare Pages is not supported. Use Cloudflare Workers with SERVER_ADAPTER=cloudflare_workers.')
 }
