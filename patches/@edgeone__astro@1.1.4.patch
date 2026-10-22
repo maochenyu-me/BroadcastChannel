@@ -1,0 +1,37 @@
+diff --git a/dist/lib/server-entry.js b/dist/lib/server-entry.js
+index 3c950271de8edff110e3ea51b80f77917f166675..881de2a642d8309d8fdf318abcfbd5c080152ee4 100644
+--- a/dist/lib/server-entry.js
++++ b/dist/lib/server-entry.js
+@@ -54,9 +54,6 @@ function resolvePublicHost(req) {
+ 
+ async  function astroHandler (req, res) {
+   try {
+-    // TEMP DEBUG: log all incoming headers to inspect which header carries the
+-    // real public host on EdgeOne Pages (remove after confirming).
+-    console.log('[edgeone-adapter] req.headers: ' + JSON.stringify(req.headers));
+     const host = resolvePublicHost(req);
+     const proto = req.headers['x-forwarded-proto'] || 'https';
+     const url = new URL(req.url, proto + '://' + host);
+@@ -81,8 +78,20 @@ async  function astroHandler (req, res) {
+     const request = new Request(url.toString(), requestInit);
+     const response = await handler(request);
+ 
+-    // await handleResponse(res, response);
+-    return response;
++    // Fix: explicitly write the Web Response back to the SCF ServerResponse.
++    // The upstream template returns the Response object, which the EdgeOne
++    // Node function runtime does not consume, producing empty 200 responses.
++    res.statusCode = response.status;
++    for (const [key, value] of response.headers.entries()) {
++      res.setHeader(key, value);
++    }
++    if (req.method === 'HEAD' || !response.body) {
++      res.end();
++      return;
++    }
++    const responseBodyBuffer = Buffer.from(await response.arrayBuffer());
++    res.setHeader('content-length', String(Buffer.byteLength(responseBodyBuffer)));
++    res.end(responseBodyBuffer);
+   } catch (error) {
+     console.error('SSR Error:', error);
+     res.statusCode = 500;
