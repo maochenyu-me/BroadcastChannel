@@ -34,7 +34,7 @@ const { currentPathname, hasCustomTitle, linksPathname, seoParams, siteRootPathn
 const GOOGLE_SEARCH_SITE = getEnv(import.meta.env, 'GOOGLE_SEARCH_SITE')
 const searchAction = GOOGLE_SEARCH_SITE ? 'https://www.google.com/search' : `${SITE_URL}search/result`
 
-const HEADER_INJECT = getEnv(import.meta.env, 'HEADER_INJECT')
+const HEADER_INJECT = getEnv(import.meta.env, 'HEADER_INJECT') ?? ''
 const FOOTER_INJECT = getEnv(import.meta.env, 'FOOTER_INJECT')
 const TAGS = getEnv(import.meta.env, 'TAGS')
 const LINKS = getEnv(import.meta.env, 'LINKS')
