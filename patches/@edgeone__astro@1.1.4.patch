@@ -12,7 +12,7 @@ index 3c950271de8edff110e3ea51b80f77917f166675..881de2a642d8309d8fdf318abcfbd5c0
      const host = resolvePublicHost(req);
      const proto = req.headers['x-forwarded-proto'] || 'https';
      const url = new URL(req.url, proto + '://' + host);
-@@ -81,8 +78,22 @@ async  function astroHandler (req, res) {
+@@ -81,8 +78,16 @@ async  function astroHandler (req, res) {
      const request = new Request(url.toString(), requestInit);
      const response = await handler(request);
  
@@ -20,19 +20,13 @@ index 3c950271de8edff110e3ea51b80f77917f166675..881de2a642d8309d8fdf318abcfbd5c0
 -    return response;
 +    // Fix: the upstream template returns the raw Web Response whose body is a
 +    // ReadableStream; the EdgeOne Node function runtime fails to consume it and
-+    // answers with an empty 200. Materialize the body first, then write it to
-+    // res AND return a fresh Response so both runtime flavors work.
++    // answers with an empty 200. Return a Response with a fully materialized
++    // Buffer body instead. res is intentionally left untouched: the runtime
++    // only consumes the returned value, and writing to res throws.
 +    const responseBodyBuffer = Buffer.from(await response.arrayBuffer());
-+    const responseHeaders = Object.fromEntries(response.headers.entries());
-+    responseHeaders['content-length'] = String(responseBodyBuffer.length);
-+    res.statusCode = response.status;
-+    for (const [key, value] of Object.entries(responseHeaders)) {
-+      res.setHeader(key, value);
-+    }
-+    res.end(req.method === 'HEAD' ? undefined : responseBodyBuffer);
 +    return new Response(responseBodyBuffer, {
 +      status: response.status,
-+      headers: responseHeaders,
++      headers: response.headers,
 +    });
    } catch (error) {
      console.error('SSR Error:', error);
