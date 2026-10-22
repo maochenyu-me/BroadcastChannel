@@ -12,26 +12,28 @@ index 3c950271de8edff110e3ea51b80f77917f166675..881de2a642d8309d8fdf318abcfbd5c0
      const host = resolvePublicHost(req);
      const proto = req.headers['x-forwarded-proto'] || 'https';
      const url = new URL(req.url, proto + '://' + host);
-@@ -81,8 +78,20 @@ async  function astroHandler (req, res) {
+@@ -81,8 +78,22 @@ async  function astroHandler (req, res) {
      const request = new Request(url.toString(), requestInit);
      const response = await handler(request);
  
 -    // await handleResponse(res, response);
 -    return response;
-+    // Fix: explicitly write the Web Response back to the SCF ServerResponse.
-+    // The upstream template returns the Response object, which the EdgeOne
-+    // Node function runtime does not consume, producing empty 200 responses.
++    // Fix: the upstream template returns the raw Web Response whose body is a
++    // ReadableStream; the EdgeOne Node function runtime fails to consume it and
++    // answers with an empty 200. Materialize the body first, then write it to
++    // res AND return a fresh Response so both runtime flavors work.
++    const responseBodyBuffer = Buffer.from(await response.arrayBuffer());
++    const responseHeaders = Object.fromEntries(response.headers.entries());
++    responseHeaders['content-length'] = String(responseBodyBuffer.length);
 +    res.statusCode = response.status;
-+    for (const [key, value] of response.headers.entries()) {
++    for (const [key, value] of Object.entries(responseHeaders)) {
 +      res.setHeader(key, value);
 +    }
-+    if (req.method === 'HEAD' || !response.body) {
-+      res.end();
-+      return;
-+    }
-+    const responseBodyBuffer = Buffer.from(await response.arrayBuffer());
-+    res.setHeader('content-length', String(Buffer.byteLength(responseBodyBuffer)));
-+    res.end(responseBodyBuffer);
++    res.end(req.method === 'HEAD' ? undefined : responseBodyBuffer);
++    return new Response(responseBodyBuffer, {
++      status: response.status,
++      headers: responseHeaders,
++    });
    } catch (error) {
      console.error('SSR Error:', error);
      res.statusCode = 500;

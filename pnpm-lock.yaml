@@ -11,7 +11,7 @@ overrides:
   tar@6.2.1: 7.5.16
 
 patchedDependencies:
-  '@edgeone/astro@1.1.4': b9d1ba0d671394e86764faa4fee7eb11d63480733dcde99256e5442b7e6b544c
+  '@edgeone/astro@1.1.4': f5d20ca5dc5b7db26144c48b4d88336fbbbcf00d85294d563fec2fe6d2d00645
 
 importers:
 
@@ -37,7 +37,7 @@ importers:
         version: 11.0.3(astro@7.0.9(@emnapi/core@1.11.1)(@emnapi/runtime@1.11.1)(@netlify/blobs@10.7.9)(@types/node@25.9.2)(@vercel/functions@3.7.0)(jiti@2.7.0)(rollup@4.61.1)(yaml@2.9.0))(rollup@4.61.1)
       '@edgeone/astro':
         specifier: ^1.1.4
-        version: 1.1.4(patch_hash=b9d1ba0d671394e86764faa4fee7eb11d63480733dcde99256e5442b7e6b544c)(astro@7.0.9(@emnapi/core@1.11.1)(@emnapi/runtime@1.11.1)(@netlify/blobs@10.7.9)(@types/node@25.9.2)(@vercel/functions@3.7.0)(jiti@2.7.0)(rollup@4.61.1)(yaml@2.9.0))(rollup@4.61.1)
+        version: 1.1.4(patch_hash=f5d20ca5dc5b7db26144c48b4d88336fbbbcf00d85294d563fec2fe6d2d00645)(astro@7.0.9(@emnapi/core@1.11.1)(@emnapi/runtime@1.11.1)(@netlify/blobs@10.7.9)(@types/node@25.9.2)(@vercel/functions@3.7.0)(jiti@2.7.0)(rollup@4.61.1)(yaml@2.9.0))(rollup@4.61.1)
       '@iconify-json/ri':
         specifier: ^1.2.10
         version: 1.2.10
@@ -6955,7 +6955,7 @@ snapshots:
     optionalDependencies:
       eslint: 10.7.0(jiti@2.7.0)
 
-  '@edgeone/astro@1.1.4(patch_hash=b9d1ba0d671394e86764faa4fee7eb11d63480733dcde99256e5442b7e6b544c)(astro@7.0.9(@emnapi/core@1.11.1)(@emnapi/runtime@1.11.1)(@netlify/blobs@10.7.9)(@types/node@25.9.2)(@vercel/functions@3.7.0)(jiti@2.7.0)(rollup@4.61.1)(yaml@2.9.0))(rollup@4.61.1)':
+  '@edgeone/astro@1.1.4(patch_hash=f5d20ca5dc5b7db26144c48b4d88336fbbbcf00d85294d563fec2fe6d2d00645)(astro@7.0.9(@emnapi/core@1.11.1)(@emnapi/runtime@1.11.1)(@netlify/blobs@10.7.9)(@types/node@25.9.2)(@vercel/functions@3.7.0)(jiti@2.7.0)(rollup@4.61.1)(yaml@2.9.0))(rollup@4.61.1)':
     dependencies:
       '@vercel/nft': 0.27.7(rollup@4.61.1)
       astro: 7.0.9(@emnapi/core@1.11.1)(@emnapi/runtime@1.11.1)(@netlify/blobs@10.7.9)(@types/node@25.9.2)(@vercel/functions@3.7.0)(jiti@2.7.0)(rollup@4.61.1)(yaml@2.9.0)
