@@ -47,7 +47,10 @@ export const onRequest = defineMiddleware(async (context, next) => {
     }
 
     if (shouldApplyDefaultCache(response)) {
-      response.headers.set('Cache-Control', 'public, max-age=300, s-maxage=300')
+      // No s-maxage here: the EdgeOne CDN breaks function responses that
+      // declare a shared-cache directive (empty 200 bodies). Browser caching
+      // only; server-side freshness is handled by the ocache layer.
+      response.headers.set('Cache-Control', 'public, max-age=300')
     }
   }
   return response
