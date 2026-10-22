@@ -14,3 +14,5 @@ overrides:
   semver@6.0.0: 6.3.1
   tar@6.1.11: 7.5.16
   tar@6.2.1: 7.5.16
+patchedDependencies:
+  '@edgeone/astro@1.1.4': patches/@edgeone__astro@1.1.4.patch
