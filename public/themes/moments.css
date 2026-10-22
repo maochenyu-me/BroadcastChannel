@@ -138,6 +138,30 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+/* swup 换页：固定滚动条槽位防止长短页切换时居中列横移 + 内容淡出淡入 */
+html {
+  scrollbar-gutter: stable;
+}
+
+#swup {
+  opacity: 1;
+  transition: opacity 0.18s ease;
+}
+
+html.is-animating #swup {
+  opacity: 0;
+}
+
+html.is-rendering #swup {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #swup {
+    transition: none;
+  }
+}
+
 ::selection {
   background: rgba(7, 193, 96, 0.22);
 }

@@ -80,22 +80,22 @@ const skipLinkText = 'Skip to main content'
 
   <body class:list={[pageType, pageClass]}>
     <a href="#main-content" class="skip-link">{skipLinkText}</a>
+    <SiteHeader channel={channel}>
+      <SiteNavigation
+        channelTitle={channel?.title}
+        currentPathname={currentPathname}
+        googleSearchSite={GOOGLE_SEARCH_SITE}
+        linksPathname={linksPathname}
+        navs={navs}
+        searchAction={searchAction}
+        showLinks={Boolean(LINKS)}
+        showTags={Boolean(TAGS)}
+        siteRootPathname={siteRootPathname}
+        siteUrl={SITE_URL}
+        tagsPathname={tagsPathname}
+      />
+    </SiteHeader>
     <div id="swup">
-      <SiteHeader channel={channel}>
-        <SiteNavigation
-          channelTitle={channel?.title}
-          currentPathname={currentPathname}
-          googleSearchSite={GOOGLE_SEARCH_SITE}
-          linksPathname={linksPathname}
-          navs={navs}
-          searchAction={searchAction}
-          showLinks={Boolean(LINKS)}
-          showTags={Boolean(TAGS)}
-          siteRootPathname={siteRootPathname}
-          siteUrl={SITE_URL}
-          tagsPathname={tagsPathname}
-        />
-      </SiteHeader>
       <main id="main-content">
         <slot />
       </main>
@@ -111,6 +111,22 @@ const skipLinkText = 'Skip to main content'
       import SwupScrollPlugin from '@swup/scroll-plugin'
       import Swup from 'swup'
 
+      function normalize(p) {
+        return p.replace(/\/+$/, '') || '/'
+      }
+      function updateNavCurrent() {
+        const current = normalize(location.pathname)
+        document.querySelectorAll('.site-navigation a[href]').forEach((a) => {
+          const path = normalize(new URL(a.getAttribute('href'), location.origin).pathname)
+          if (path === current) {
+            a.setAttribute('aria-current', 'page')
+          }
+          if (path !== current) {
+            a.removeAttribute('aria-current')
+          }
+        })
+      }
+
       const swup = new Swup({
         containers: ['#swup'],
         plugins: [
@@ -120,6 +136,8 @@ const skipLinkText = 'Skip to main content'
         ],
       })
 
+      // 页头已持久化（不参与换页替换），导航高亮需在每次换页后手动更新
+      swup.hooks.on('page:view', updateNavCurrent)
       window.swup = swup
     </script>
   </body>
