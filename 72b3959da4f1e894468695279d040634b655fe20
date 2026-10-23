@@ -1,0 +1,1 @@
+{"version":2,"tool":"WaLiCode","toolVersion":"0.5.6","author":{"name":"Moretti815","email":"unknown"},"intent":"feature","promptSummary":"现在重新添加了视频，又默认图片了","files":[{"path":"E:/github_maochenyu_me/BroadcastChannel/src/config.ts","lines":[22,24,25,26],"model":"deepseek-v4.1-flash","generatedAt":1792728588101}],"totalAiLines":4,"totalHumanLines":0,"timestamp":1792728774139}
