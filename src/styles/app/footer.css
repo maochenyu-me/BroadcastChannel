@@ -26,7 +26,10 @@
     background: var(--code-background-color);
     opacity: 0.85;
     pointer-events: auto;
-    transition: transform 180ms ease;
+    transition:
+      transform 180ms ease,
+      opacity 200ms ease,
+      visibility 200ms ease;
   }
 
   #back-to-top:hover {
@@ -39,29 +42,11 @@
     filter: var(--icon-secondary-filter);
   }
 
-  @supports (animation-timeline: scroll()) {
-    #back-to-top {
-      opacity: 0;
-      visibility: hidden;
-      animation: back-to-top-reveal linear both;
-      animation-range: 0 100vh;
-      animation-timeline: scroll(root block);
-      pointer-events: none;
-    }
-
-    @keyframes back-to-top-reveal {
-      0%,
-      99% {
-        opacity: 0;
-        visibility: hidden;
-        pointer-events: none;
-      }
-
-      100% {
-        opacity: 0.85;
-        visibility: visible;
-        pointer-events: auto;
-      }
-    }
+  /* 靠近顶部时隐藏；data-scrolled 由 BackToTop.astro 的脚本维护（无 JS 时保持可见） */
+  #back-to-top[data-scrolled='false'] {
+    visibility: hidden;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(0.35rem);
   }
 }

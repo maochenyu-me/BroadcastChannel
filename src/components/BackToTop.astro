@@ -3,7 +3,49 @@ import backToTopIcon from '../assets/back-to-top.svg'
 ---
 
 <div id="back-to-top-wrapper">
-  <a href="#main-content" id="back-to-top" aria-label="Back to top">
+  <a href="#main-content" id="back-to-top" aria-label="Back to top" data-scrolled="false">
     <img {...backToTopIcon} alt="" />
   </a>
 </div>
+
+<script>
+  /*
+   * 回到顶部按钮显隐控制。
+   * 原实现依赖 CSS scroll-driven animation（animation-timeline: scroll(root) + animation-range: 0 100vh），
+   * 只有滚满一屏（100vh）才显示，且滚动容器/浏览器支持差异会让按钮一直不出现。
+   * 改为脚本维护 data-scrolled，滚动超过阈值即显示，行为稳定可预期。
+   */
+  const REVEAL_THRESHOLD = 300
+
+  function setupBackToTop() {
+    const button = document.getElementById('back-to-top')
+
+    if (!button || button.dataset.bound === '1') {
+      return
+    }
+
+    button.dataset.bound = '1'
+
+    let ticking = false
+    const sync = () => {
+      ticking = false
+      const offset = window.scrollY || document.documentElement.scrollTop || 0
+      button.dataset.scrolled = offset > REVEAL_THRESHOLD ? 'true' : 'false'
+    }
+    const schedule = () => {
+      if (ticking) {
+        return
+      }
+      ticking = true
+      window.requestAnimationFrame(sync)
+    }
+
+    sync()
+    window.addEventListener('scroll', schedule, { passive: true })
+    window.addEventListener('resize', schedule, { passive: true })
+    // swup 换页不会替换该元素（位于 #swup 之外），换页/前进后退后补一次同步
+    window.swup?.hooks?.on?.('page:view', schedule)
+  }
+
+  setupBackToTop()
+</script>
