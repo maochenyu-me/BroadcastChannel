@@ -19,11 +19,11 @@ export const siteConfig = {
     // 封面媒体扩展配置：视频 / 多图轮播 / 明暗双图
     cover: {
       // 多图轮播：填 2-6 个图片地址（public/ 相对路径或完整 URL）启用自动淡切轮播，超出 6 张只取前 6 张
-      images: [],
+      images: ['/bg-light.jpg'],
       // 暗色模式对应图，与 images 按下标一一对应，可只填部分
-      imagesDark: [],
-      // 视频封面地址，设置后优先于图片；建议 mp4、静音短循环，明暗模式共用这一套
-      video: '/bg.mp4',
+      imagesDark: ['/bg-dark.jpg'],
+      // 视频封面地址，设置后优先于图片（当前使用 /m1.mp4 循环视频，images 仅作留空时的兜底）
+      video: '/m1.mp4',
       // 视频是否静音（默认 true 静音循环自动播放；改 false 开启声音，浏览器不允许带声自动播放，需点击封面开始）
       videoMuted: true,
       // 视频封面帧图片，未配置时浏览器取视频首帧
